@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
 using System.Linq;
 using System.Web;
 
@@ -8,20 +10,45 @@ namespace Vets.Models
 {
     public class Animais
     {
-        public int AnimaisID { get; set; }
+        public Animais()
+        {
+            // inicialização da lista de Consultas de um Animal
+            Consultas = new HashSet<Consultas>();
+        }
+        
+        [Key]
+        public int AnimalID { get; set; }
 
-        public string NomeDoAnimal { get; set; }
+        [Required]
+        [StringLength(30)]
+        public string Nome { get; set; }
 
+        [Required]
+        [StringLength(30)]
         public string Especie { get; set; }
 
+        [Required]
+        [StringLength(30)]
         public string Raca { get; set; }
 
-        //...outros atributos ficariam aqui
+        public float Peso { get; set; }
 
-        //criar uma Chave Forasteira - FK
+        public float? Altura { get; set; }
+
+
+        // **************************
+        // criar a chave forasteira
+        // relaciona o objeto ANIMAL com um objeto DONO
+        public Donos Dono { get; set; }
+
+        // cria um atributo para funcionar como FK, na BD
+        // e relaciona-o com o atributo anterior
         [ForeignKey("Dono")]
-        public int DonoFK { get; set; } // existe para criar a FK na BD
-        public Donos Dono { get; set; } // existe para relacionar os objetos no C#
+        public int DonosFK { get; set; }
+        // **************************
+
+        // um ANIMAL tem uma coleção de CONSULTAS
+        public virtual ICollection<Consultas> Consultas { get; set; }
 
     }
 }

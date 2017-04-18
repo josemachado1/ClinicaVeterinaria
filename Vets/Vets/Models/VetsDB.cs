@@ -18,5 +18,7 @@ namespace Vets.Models
         //decrever as 'tabelas' que estao na BD
         public virtual DbSet<Donos > Donos { get; set; }
         public virtual DbSet<Animais> Animais { get; set; }
+        public virtual DbSet<Veterinarios> Veterinarios { get; set; }
+        public virtual DbSet<Consultas> Consultas { get; set; }
     }
 }
