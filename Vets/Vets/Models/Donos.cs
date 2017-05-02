@@ -19,13 +19,16 @@ namespace Vets.Models
         }
 
 
-        [Key]
+         [Key] // indica que estamos perante uma PK
+         [DatabaseGenerated(DatabaseGeneratedOption.None)] // quando usado, inibe o atributo de ser Auto Number
+         [Display(Name ="Identificador do Cliente")]
         public int DonoID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="o {0} é de preenchimento obrgatório...")]
+        [Display(Name ="Nome do cliente")]
         public string Nome { set; get; }
 
-        [Required]
+        [Required(ErrorMessage = "Não se esqueça de preencher o Nº de contribuinte")]
         public string NIF { get; set; }
 
         // especificar que um DONO tem muitos ANIMAIS
