@@ -94,16 +94,21 @@ namespace Vets.Controllers
         // GET: Donos/Delete/5
         public ActionResult Delete(int? id)
         {
+            //avalia se o parametro é nulo
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("Index"); //new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Donos donos = db.Donos.Find(id);
-            if (donos == null)
+            //pesquisar na BD pelo dono cujo ID é fornecido
+            Donos dono = db.Donos.Find(id);
+            //se o dono não é encontrado...
+            if (dono == null)
             {
-                return HttpNotFound();
+                //redirecionar para o inicio
+                return RedirectToAction("Index"); //HttpNotFound();
             }
-            return View(donos);
+            //mostra os dados 'donos'
+            return View(dono);
         }
 
         // POST: Donos/Delete/5
@@ -111,9 +116,27 @@ namespace Vets.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Donos donos = db.Donos.Find(id);
-            db.Donos.Remove(donos);
+            //procurar o 'dono'n, na BD, cuja PK é igual ao parametro fornecido -id-
+            Donos dono = db.Donos.Find(id);
+            try
+            {
+            //remove do objeto 'db', o dono encontrado na linha anterior
+            db.Donos.Remove(dono);
+            //torna defiitivas as instruções anteriores
             db.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                //gerar uma menssagem de erro a ser entregue ao utilizador
+                ModelState.AddModelError("",
+                    string.Format("Ocorreu um erro na operação de eliminar o 'dono' com ID {0} - {1}", id, dono.Nome)
+                    );
+                //regressar à view 'Delete'
+                return View(dono);
+
+            }
+            //devolve o controlo do programa, apresentando a view 'Index'
             return RedirectToAction("Index");
         }
 
