@@ -19,16 +19,20 @@ namespace Vets.Models
         }
 
 
-         [Key] // indica que estamos perante uma PK
-         [DatabaseGenerated(DatabaseGeneratedOption.None)] // quando usado, inibe o atributo de ser Auto Number
-         [Display(Name ="Identificador do Cliente")]
+        [Key] // indica que estamos perante uma PK
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // quando usado, inibe o atributo de ser Auto Number
+        [Display(Name = "Identificador do Cliente")]
         public int DonoID { get; set; }
 
-        [Required(ErrorMessage ="o {0} é de preenchimento obrgatório...")]
-        [Display(Name ="Nome do cliente")]
+        [Required(ErrorMessage = "o {0} é de preenchimento obrgatório...")]
+        [Display(Name = "Nome do cliente")]
+        [RegularExpression("[A-Z][a-záéíóúàèìòù]+((( )|( de|da|dos )|( d'))?",
+                ErrorMessage = "Deve escrever o {0} só com letras. Pode usar um espaço em branco entre palavras. Deve começar cada nome com uma maiúscula")]
         public string Nome { set; get; }
 
         [Required(ErrorMessage = "Não se esqueça de preencher o Nº de contribuinte")]
+        [RegularExpression("[0-9]{9}",
+                ErrorMessage ="O {0} só aceita 9 algarismos.")]
         public string NIF { get; set; }
 
         // especificar que um DONO tem muitos ANIMAIS

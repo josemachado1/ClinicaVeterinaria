@@ -48,16 +48,57 @@ namespace Vets.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DonoID,Nome,NIF")] Donos donos)
+        public ActionResult Create([Bind(Include = "Nome,NIF")] Donos dono)
         {
-            if (ModelState.IsValid)
+            //determinar o nº (ID) a atribuir ao novo DONO
+            //criar a var, que recebe esse valor
+            int novoID = 0;
+
+            try
             {
-                db.Donos.Add(donos);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                //determinar o novo ID
+                //faz a mesma coisa que a de baixo
+                /*    novoID = (from d in db.Donos
+                              orderby d.DonoID descending
+                              select d.DonoID).FirstOrDefault() + 1;
+                */
+                novoID = db.Donos.Max(d => d.DonoID) + 1;
             }
 
-            return View(donos);
+            catch (SystemException)
+            {
+                //a tabela 'Donos' está vazia
+                //não sendo possivel devolver o MAX de uma tabela
+                //por isso, vou atribuir 'manualmente' o valor de 'novoID'
+                novoID = 1;
+            }
+            //atribuir o 'novoID' ao objeto 'dono'
+            dono.DonoID = novoID;
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Donos.Add(dono);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }            
+            catch (Exception)
+            {
+                //não consigo guardar as alterações 
+                //No minimo , preciso de notificar o utilizador que o processo falhou
+                ModelState.AddModelError("", "Ocorreu um erro na adição do novo Dono.");
+                //Notificar o 'administrador/programador' que ocorreu este erro
+                //fazer : 
+                //1º enviar mail ao programador a informar da ocorrencia do erro
+                //2º ter uma tabela , na BD, onde são reportados os erros:
+                // - data
+                // - metodo
+                // - controller 
+                // - detalhes do erro
+            }
+
+            return View(dono);
         }
 
         // GET: Donos/Edit/5
